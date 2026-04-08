@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "products main page",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Isaac-Hammon/Producte2e-Assignment.git"
+  },
+  "keywords": [
+    "key"
+  ],
+  "author": "Isaac",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Isaac-Hammon/Producte2e-Assignment/issues"
+  },
+  "homepage": "https://github.com/Isaac-Hammon/Producte2e-Assignment#readme",
+  "devDependencies": {
+    "cypress": "^15.13.1"
+  }
+}
