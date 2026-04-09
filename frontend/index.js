@@ -1,4 +1,4 @@
-const getResponse = await fetch("http://localhost:5173/products");
+const getResponse = await fetch("http://localhost:5013/products");
 const productsJson = await getResponse.json();
 
 console.log("productsJson");

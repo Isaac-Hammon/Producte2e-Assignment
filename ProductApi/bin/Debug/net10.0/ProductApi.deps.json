@@ -8,63 +8,63 @@
     ".NETCoreApp,Version=v10.0": {
       "ProductApi/1.0.0": {
         "dependencies": {
-          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "10.0.5",
-          "Microsoft.EntityFrameworkCore": "10.0.5",
-          "Microsoft.EntityFrameworkCore.InMemory": "10.0.5"
+          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "8.0.5",
+          "Microsoft.EntityFrameworkCore": "8.0.5",
+          "Microsoft.EntityFrameworkCore.InMemory": "8.0.5"
         },
         "runtime": {
           "ProductApi.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/10.0.5": {
+      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/8.0.5": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "10.0.5"
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.5"
         },
         "runtime": {
-          "lib/net10.0/Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll": {
-            "assemblyVersion": "10.0.5.0",
-            "fileVersion": "10.0.526.15411"
+          "lib/net8.0/Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll": {
+            "assemblyVersion": "8.0.5.0",
+            "fileVersion": "8.0.524.22404"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore/10.0.5": {
+      "Microsoft.EntityFrameworkCore/8.0.5": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "10.0.5"
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.5"
         },
         "runtime": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.dll": {
-            "assemblyVersion": "10.0.5.0",
-            "fileVersion": "10.0.526.15411"
+          "lib/net8.0/Microsoft.EntityFrameworkCore.dll": {
+            "assemblyVersion": "8.0.5.0",
+            "fileVersion": "8.0.524.21704"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Abstractions/10.0.5": {
+      "Microsoft.EntityFrameworkCore.Abstractions/8.0.5": {
         "runtime": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.Abstractions.dll": {
-            "assemblyVersion": "10.0.5.0",
-            "fileVersion": "10.0.526.15411"
+          "lib/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll": {
+            "assemblyVersion": "8.0.5.0",
+            "fileVersion": "8.0.524.21704"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.InMemory/10.0.5": {
+      "Microsoft.EntityFrameworkCore.InMemory/8.0.5": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.5"
+          "Microsoft.EntityFrameworkCore": "8.0.5"
         },
         "runtime": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
-            "assemblyVersion": "10.0.5.0",
-            "fileVersion": "10.0.526.15411"
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "assemblyVersion": "8.0.5.0",
+            "fileVersion": "8.0.524.21704"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Relational/10.0.5": {
+      "Microsoft.EntityFrameworkCore.Relational/8.0.5": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.5"
+          "Microsoft.EntityFrameworkCore": "8.0.5"
         },
         "runtime": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.Relational.dll": {
-            "assemblyVersion": "10.0.5.0",
-            "fileVersion": "10.0.526.15411"
+          "lib/net8.0/Microsoft.EntityFrameworkCore.Relational.dll": {
+            "assemblyVersion": "8.0.5.0",
+            "fileVersion": "8.0.524.21704"
           }
         }
       }
@@ -76,40 +76,40 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/10.0.5": {
+    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/8.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-mg5wedToJyrvyyJB88MN2aSuGtzs7x8Jal/o8MlblOj6hZDQZddYt1/cLrmWS5O7/RiykiIZ7PUGyG1mlQSjLQ==",
-      "path": "microsoft.aspnetcore.diagnostics.entityframeworkcore/10.0.5",
-      "hashPath": "microsoft.aspnetcore.diagnostics.entityframeworkcore.10.0.5.nupkg.sha512"
+      "sha512": "sha512-mdiL7yWCBhazRnXg95+Iack472JbGxWG2jvK/tw+Z3NCbzuI61qZ/ROJAHxh3wzQCCCjiSe/elh/kGFBe6v2ww==",
+      "path": "microsoft.aspnetcore.diagnostics.entityframeworkcore/8.0.5",
+      "hashPath": "microsoft.aspnetcore.diagnostics.entityframeworkcore.8.0.5.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore/10.0.5": {
+    "Microsoft.EntityFrameworkCore/8.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9tNBmK3EpYVGRQLiqP+bqK2m+TD0Gv//4vCzR7ZOgl4FWzCFyOpYdIVka13M4kcBdPdSJcs3wbHr3rmzOqbIMA==",
-      "path": "microsoft.entityframeworkcore/10.0.5",
-      "hashPath": "microsoft.entityframeworkcore.10.0.5.nupkg.sha512"
+      "sha512": "sha512-sqpDZgfzmTPXy/jCekqTaPDwqRDjtdGmIL+eqFfXtVAoH4AanWjeyxQ1ej3uVnTQO6f23+m9+ggJDVcgyPJxcA==",
+      "path": "microsoft.entityframeworkcore/8.0.5",
+      "hashPath": "microsoft.entityframeworkcore.8.0.5.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Abstractions/10.0.5": {
+    "Microsoft.EntityFrameworkCore.Abstractions/8.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-32c58Rnm47Qvhimawf67KO9PytgPz3QoWye7Abapt0Yocw/JnzMiSNj/pRoIKyn8Jxypkv86zxKD4Q/zNTc0Ag==",
-      "path": "microsoft.entityframeworkcore.abstractions/10.0.5",
-      "hashPath": "microsoft.entityframeworkcore.abstractions.10.0.5.nupkg.sha512"
+      "sha512": "sha512-qwYdfjFKtmTXX8NIm0MuZxUkon1tcw+aF5huzR7YOVr/tR3s4fqw9DWcvc23l3Jhpo/uGHWZcNPyFlI2CD3Usg==",
+      "path": "microsoft.entityframeworkcore.abstractions/8.0.5",
+      "hashPath": "microsoft.entityframeworkcore.abstractions.8.0.5.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.InMemory/10.0.5": {
+    "Microsoft.EntityFrameworkCore.InMemory/8.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-zz4THzlDOrJ7fKU2YUOzQFs2LJ9DgOSr5xFXcDdoD59el73MTQLtQQOAJxQ94F4XDegyL9+2sePSQGdcU25ZxQ==",
-      "path": "microsoft.entityframeworkcore.inmemory/10.0.5",
-      "hashPath": "microsoft.entityframeworkcore.inmemory.10.0.5.nupkg.sha512"
+      "sha512": "sha512-gKsH9dFzRAvE/DjJZ5sw1LpQoj8jiY1Wxd7BOx0i7oQZ4VyXBIFZYKLXIypkkIHfvqwTlfDL4boMZxVFZ6SgNQ==",
+      "path": "microsoft.entityframeworkcore.inmemory/8.0.5",
+      "hashPath": "microsoft.entityframeworkcore.inmemory.8.0.5.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Relational/10.0.5": {
+    "Microsoft.EntityFrameworkCore.Relational/8.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uxmFjZEAB/KbsgWFSS4lLqkEHCfXxB2x0UcbiO4e5fCRpFFeTMSx/me6009nYJLu5IKlDwO1POh++P6RilFTDw==",
-      "path": "microsoft.entityframeworkcore.relational/10.0.5",
-      "hashPath": "microsoft.entityframeworkcore.relational.10.0.5.nupkg.sha512"
+      "sha512": "sha512-x2bdSK3eKKEQkDdYcGxxDU+S7NqhBiz/Fciz01Mafz9P71VRdP3JskKHaZvwK0/sNEAT3hS7BTsDQGUA2F9mAA==",
+      "path": "microsoft.entityframeworkcore.relational/8.0.5",
+      "hashPath": "microsoft.entityframeworkcore.relational.8.0.5.nupkg.sha512"
     }
   }
 }
