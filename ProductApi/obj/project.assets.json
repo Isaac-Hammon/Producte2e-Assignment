@@ -203,11 +203,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Isaac\\Producte2e Assignment 2\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
+      "projectUniqueName": "D:\\Isaac\\Product e2e Assignment\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
       "projectName": "ProductApi",
-      "projectPath": "d:\\Isaac\\Producte2e Assignment 2\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
+      "projectPath": "D:\\Isaac\\Product e2e Assignment\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
       "packagesPath": "C:\\Users\\web\\.nuget\\packages\\",
-      "outputPath": "d:\\Isaac\\Producte2e Assignment 2\\Producte2e-Assignment\\ProductApi\\obj\\",
+      "outputPath": "D:\\Isaac\\Product e2e Assignment\\Producte2e-Assignment\\ProductApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\web\\AppData\\Roaming\\NuGet\\NuGet.Config"
