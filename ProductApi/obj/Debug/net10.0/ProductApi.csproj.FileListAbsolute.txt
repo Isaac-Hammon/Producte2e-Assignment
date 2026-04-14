@@ -70,3 +70,39 @@ D:\Isaac\Product e2e Assignment\Producte2e-Assignment\ProductApi\obj\Debug\net10
 D:\Isaac\Product e2e Assignment\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.pdb
 D:\Isaac\Product e2e Assignment\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.genruntimeconfig.cache
 D:\Isaac\Product e2e Assignment\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ref\ProductApi.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\appsettings.Development.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\appsettings.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.staticwebassets.endpoints.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.exe
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.deps.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.runtimeconfig.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\ProductApi.pdb
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.InMemory.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.csproj.AssemblyReference.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\rpswa.dswa.cache.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.AssemblyInfoInputs.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.AssemblyInfo.cs
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.csproj.CoreCompileInputs.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.MvcApplicationPartsAssemblyInfo.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.sourcelink.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\rjimswa.dswa.cache.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\scopedcss\bundle\ProductApi.styles.css
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\staticwebassets.build.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\staticwebassets.build.json.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\staticwebassets.development.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\staticwebassets.build.endpoints.json
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\swae.build.ex.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.csproj.Up2Date
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\refint\ProductApi.dll
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.pdb
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ProductApi.genruntimeconfig.cache
+D:\Isaac\New folder\Producte2e-Assignment\ProductApi\obj\Debug\net10.0\ref\ProductApi.dll

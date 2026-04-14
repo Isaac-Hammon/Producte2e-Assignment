@@ -11,9 +11,10 @@ for (let i = 0; i < productsJson.length; i++) {
 
 	const name = product.name;
 	const price = product.price;
+	const inventory = product.inventoryCount;
 
 	const newLi = document.createElement("li");
-	newLi.innerText = `Name: ${name}, Price: ${price}`;
+	newLi.innerText = `Name: ${name}, Price: ${price}, Inventory: ${inventory}`;
 
 	productsList.appendChild(newLi);
 }
