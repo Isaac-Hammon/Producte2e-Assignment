@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XxZfh/u0ys0=",
+  "dgSpecHash": "Vzu2Ii3eUOQ=",
   "success": true,
-  "projectFilePath": "D:\\Isaac\\New folder\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
+  "projectFilePath": "D:\\Isaac\\producte2e Assignment\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\web\\.nuget\\packages\\microsoft.aspnetcore.diagnostics.entityframeworkcore\\8.0.5\\microsoft.aspnetcore.diagnostics.entityframeworkcore.8.0.5.nupkg.sha512",
     "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.5\\microsoft.entityframeworkcore.8.0.5.nupkg.sha512",
