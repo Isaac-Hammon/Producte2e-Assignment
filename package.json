@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "cypress": "^15.13.1"
+    "cypress": "^15.13.1",
+    "jest": "^30.3.0"
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0"
