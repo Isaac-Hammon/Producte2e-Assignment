@@ -1,15 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "Vzu2Ii3eUOQ=",
+  "dgSpecHash": "OJYaD9t+ZsQ=",
   "success": true,
-  "projectFilePath": "D:\\Isaac\\producte2e Assignment\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
+  "projectFilePath": "D:\\Isaac\\Product e2e Assignment\\Producte2e-Assignment\\ProductApi\\ProductApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\web\\.nuget\\packages\\microsoft.aspnetcore.diagnostics.entityframeworkcore\\8.0.5\\microsoft.aspnetcore.diagnostics.entityframeworkcore.8.0.5.nupkg.sha512",
     "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.5\\microsoft.entityframeworkcore.8.0.5.nupkg.sha512",
     "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.5\\microsoft.entityframeworkcore.abstractions.8.0.5.nupkg.sha512",
     "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.5\\microsoft.entityframeworkcore.analyzers.8.0.5.nupkg.sha512",
     "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore.inmemory\\8.0.5\\microsoft.entityframeworkcore.inmemory.8.0.5.nupkg.sha512",
-    "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.5\\microsoft.entityframeworkcore.relational.8.0.5.nupkg.sha512"
+    "C:\\Users\\web\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.5\\microsoft.entityframeworkcore.relational.8.0.5.nupkg.sha512",
+    "C:\\Users\\web\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }

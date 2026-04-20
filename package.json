@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "cypress": "^15.13.1",
+    "cypress": "^15.14.0",
     "jest": "^30.3.0"
   },
   "dependencies": {
