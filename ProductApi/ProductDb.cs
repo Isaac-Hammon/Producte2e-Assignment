@@ -7,4 +7,6 @@ class ProductDb : DbContext
         : base(options) { }
 
     public DbSet<Product> Products => Set<Product>();
+
+    public DbSet<User> Users => Set<User>();
 }

@@ -28,10 +28,8 @@ describe("products", () => {
 
 		cy.get('form button[type="submit"]').should("be.visible").click();
 
-		// confirmation message (rubric requirement)
 		cy.contains("Product Created");
 
-		// verify product appears in list
 		cy.get('ul[name="products-list"] li:last')
 			.should("be.visible")
 			.and(
@@ -40,5 +38,50 @@ describe("products", () => {
 			);
 
 		cy.url().should("eq", "http://localhost:5173/");
+	});
+});
+
+describe("users", () => {
+	it("shows user form fields", () => {
+		cy.visit("http://localhost:5173/registration.html");
+
+		cy.get('input[name="email"]').should("be.visible").and("have.attr", "required");
+
+		cy.get('input[name="password"]').should("be.visible").and("have.attr", "required");
+	});
+
+	it("creates user", () => {
+		cy.visit("http://localhost:5173/registration.html");
+
+		const email = faker.internet.email();
+		const password = faker.internet.password();
+
+		cy.get('input[name="email"]').type(email);
+		cy.get('input[name="password"]').type(password);
+
+		cy.get('button[type="submit"]').click();
+
+		cy.get("#confirmation").should("be.visible").and("contain.text", "Success");
+	});
+
+	it("shows error when duplicate email is used", () => {
+		cy.visit("http://localhost:5173/registration.html");
+
+		const email = faker.internet.email();
+		const password = faker.internet.password();
+
+		cy.get('input[name="email"]').type(email);
+		cy.get('input[name="password"]').type(password);
+
+		cy.get('button[type="submit"]').click();
+
+		cy.get("#confirmation").should("be.visible");
+
+		cy.get('input[name="email"]').clear().type(email);
+		cy.get('input[name="password"]').clear().type(password);
+
+		cy.get('button[type="submit"]').click();
+
+		cy.get("#confirmation").should("be.visible").and("contain.text", "Error");
 	});
 });
