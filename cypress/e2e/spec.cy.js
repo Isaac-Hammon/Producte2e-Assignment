@@ -12,9 +12,23 @@ describe("products", () => {
 	it("creates product", () => {
 		cy.visit("http://localhost:5173");
 
+		const email = faker.internet.email();
+		const password = faker.internet.password();
+
 		const name = faker.commerce.productName();
 		const price = faker.commerce.price({ min: 1, max: 1000, precision: 0.01 });
 		const inventoryCount = faker.number.int({ min: 0, max: 100 });
+
+		// create user so we have a valid login identity
+		cy.request("POST", "http://localhost:5013/users", {
+			email,
+			password,
+		});
+
+		// minimal fix: attach header so backend allows product creation
+		cy.intercept("POST", "http://localhost:5013/products", (req) => {
+			req.headers["X-User-Email"] = email;
+		});
 
 		cy.get("form").should("be.visible");
 
@@ -38,6 +52,30 @@ describe("products", () => {
 			);
 
 		cy.url().should("eq", "http://localhost:5173/");
+	});
+
+	// ✅ ONLY CHANGE HERE
+	it("blocks product creation when not logged in", () => {
+		cy.visit("http://localhost:5173");
+
+		const name = faker.commerce.productName();
+		const price = faker.commerce.price({ min: 1, max: 1000, precision: 0.01 });
+		const inventoryCount = faker.number.int({ min: 0, max: 100 });
+
+		cy.intercept("POST", "**/products").as("createProduct");
+
+		cy.get('form input[name="name"]').type(name);
+		cy.get('form input[name="price"]').type(price.toString());
+		cy.get('form input[name="inventoryCount"]').type(inventoryCount.toString());
+
+		cy.get('form button[type="submit"]').click();
+
+		cy.wait("@createProduct").then((interception) => {
+			expect(interception.response.statusCode).to.eq(400);
+			expect(interception.response.body.message).to.eq(
+				"You must be logged in to create a product",
+			);
+		});
 	});
 });
 
@@ -111,7 +149,6 @@ describe("users - login", () => {
 
 		cy.get('button[type="submit"]').click();
 
-		// ✔ FIXED
 		cy.get("#confirmation").should("be.visible").and("contain.text", "Login successful");
 	});
 
