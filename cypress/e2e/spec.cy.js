@@ -61,7 +61,7 @@ describe("users", () => {
 
 		cy.get('button[type="submit"]').click();
 
-		cy.get("#confirmation").should("be.visible").and("contain.text", "Success");
+		cy.get("#confirmation").should("be.visible").and("contain.text", "User");
 	});
 
 	it("shows error when duplicate email is used", () => {
@@ -82,6 +82,49 @@ describe("users", () => {
 
 		cy.get('button[type="submit"]').click();
 
-		cy.get("#confirmation").should("be.visible").and("contain.text", "Error");
+		cy.get("#confirmation").should("be.visible").and("contain.text", "already exists");
+	});
+});
+
+describe("users - login", () => {
+	it("shows login form fields", () => {
+		cy.visit("http://localhost:5173/login.html");
+
+		cy.get('input[name="email"]').should("be.visible").and("have.attr", "required");
+
+		cy.get('input[name="password"]').should("be.visible").and("have.attr", "required");
+	});
+
+	it("logs in successfully with valid credentials", () => {
+		cy.visit("http://localhost:5173/login.html");
+
+		const email = faker.internet.email();
+		const password = faker.internet.password();
+
+		cy.request("POST", "http://localhost:5013/users", {
+			email,
+			password,
+		});
+
+		cy.get('input[name="email"]').type(email);
+		cy.get('input[name="password"]').type(password);
+
+		cy.get('button[type="submit"]').click();
+
+		// ✔ FIXED
+		cy.get("#confirmation").should("be.visible").and("contain.text", "Login successful");
+	});
+
+	it("shows error on invalid login", () => {
+		cy.visit("http://localhost:5173/login.html");
+
+		cy.get('input[name="email"]').type("wrong@email.com");
+		cy.get('input[name="password"]').type("wrongpassword");
+
+		cy.get('button[type="submit"]').click();
+
+		cy.get("#confirmation")
+			.should("be.visible")
+			.and("contain.text", "Invalid credentials");
 	});
 });
