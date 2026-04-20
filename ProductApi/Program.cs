@@ -69,6 +69,25 @@ app.MapPost("/users", async (User user, ProductDb db) =>
     return Results.Ok(new { id = user.Id });
 });
 
+app.MapPost("/login", async (User login, ProductDb db) =>
+{
+    var user = await db.Users
+        .FirstOrDefaultAsync(u =>
+            u.Email == login.Email &&
+            u.Password == login.Password);
+
+    if (user == null)
+    {
+        return Results.BadRequest(new { message = "Invalid credentials" });
+    }
+
+    return Results.Ok(new
+    {
+        id = user.Id,
+        email = user.Email
+    });
+});
+
 // IMPORTANT: CORS must be BEFORE app.Run()
 app.UseCors(MyAllowSpecificOrigins);
 
