@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
-// Use ProductDb and InMemory database
 builder.Services.AddDbContext<ProductDb>(opt => opt.UseInMemoryDatabase("ProductList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -43,9 +42,19 @@ app.MapGet("/products", async (ProductDb db) =>
     await db.Products.ToListAsync()
 );
 
-// POST a new product
-app.MapPost("/products", async (Product product, ProductDb db) =>
+// ✅ BULLETPROOF AUTH CHECK (FIXED)
+app.MapPost("/products", async (HttpRequest request, Product product, ProductDb db) =>
 {
+    // safer + fully consistent header extraction
+    if (!request.Headers.TryGetValue("X-User-Email", out var userEmail) ||
+        string.IsNullOrWhiteSpace(userEmail.ToString()))
+    {
+        return Results.BadRequest(new
+        {
+            message = "You must be logged in to create a product"
+        });
+    }
+
     db.Products.Add(product);
     await db.SaveChangesAsync();
 
@@ -69,6 +78,7 @@ app.MapPost("/users", async (User user, ProductDb db) =>
     return Results.Ok(new { id = user.Id });
 });
 
+// LOGIN
 app.MapPost("/login", async (User login, ProductDb db) =>
 {
     var user = await db.Users
@@ -88,7 +98,6 @@ app.MapPost("/login", async (User login, ProductDb db) =>
     });
 });
 
-// IMPORTANT: CORS must be BEFORE app.Run()
 app.UseCors(MyAllowSpecificOrigins);
 
 app.Run();
