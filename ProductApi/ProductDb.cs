@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 
-class ProductDb : DbContext
+ public class ProductDb : DbContext
 {
     public ProductDb(DbContextOptions<ProductDb> options)
         : base(options) { }
@@ -9,4 +9,5 @@ class ProductDb : DbContext
     public DbSet<Product> Products => Set<Product>();
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Purchase> Purchases { get; set; }
 }
