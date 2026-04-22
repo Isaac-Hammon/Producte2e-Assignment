@@ -49,5 +49,39 @@ form.addEventListener("submit", async (e) => {
 		confirmation.style.display = "block";
 	}
 
+	const purchaseForm = document.querySelector('form[name="product-purchase"]');
+
+	purchaseForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+
+		const formData = new FormData(purchaseForm);
+
+		const body = {
+			productId: 1, // minimal assumption for now
+			quantity: parseInt(formData.get("quantity")),
+		};
+
+		console.log("purchaseData");
+		console.log(body);
+
+		const response = await fetch("http://localhost:5013/purchases", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+		});
+
+		// required for Cypress visibility
+		const confirmation = document.getElementById("confirmation");
+
+		if (confirmation) {
+			confirmation.style.display = "block";
+
+			// show backend message (important for validation tests)
+			confirmation.innerText = await response.text();
+		}
+	});
+
 	location.reload();
 });

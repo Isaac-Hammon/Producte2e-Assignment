@@ -10,8 +10,9 @@
 
     <ul name="products-list"></ul>
 
-    <!-- confirmation message (REQUIRED for Cypress test) -->
+
     <p id="confirmation" style="display:none;">Product Created</p>
+
 
     <form name="product-creation">
         <label for="name">Name:</label>
@@ -25,6 +26,19 @@
 
         <button type="submit">Create Product</button>
     </form>
+
+    <hr />
+
+
+    <h2>Purchase Product</h2>
+
+    <form name="product-purchase">
+        <label for="quantity">Quantity:</label>
+        <input name="quantity" type="number" min="1" />
+
+        <button type="submit">Buy</button>
+    </form>
+
 </body>
 
 </html>

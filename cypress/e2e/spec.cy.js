@@ -19,28 +19,28 @@ describe("products", () => {
 		const price = faker.commerce.price({ min: 1, max: 1000, precision: 0.01 });
 		const inventoryCount = faker.number.int({ min: 0, max: 100 });
 
-		// create user so we have a valid login identity
 		cy.request("POST", "http://localhost:5013/users", {
 			email,
 			password,
 		});
 
-		// minimal fix: attach header so backend allows product creation
 		cy.intercept("POST", "http://localhost:5013/products", (req) => {
 			req.headers["X-User-Email"] = email;
 		});
 
 		cy.get("form").should("be.visible");
 
-		cy.get('form input[name="name"]').should("be.visible").type(name);
+		cy.get('form[name="product-creation"] input[name="name"]').type(name);
 
-		cy.get('form input[name="price"]').should("be.visible").type(price.toString());
+		cy.get('form[name="product-creation"] input[name="price"]').type(price.toString());
 
-		cy.get('form input[name="inventoryCount"]')
+		cy.get('form[name="product-creation"] input[name="inventoryCount"]').type(
+			inventoryCount.toString(),
+		);
+
+		cy.get('form[name="product-creation"] button[type="submit"]')
 			.should("be.visible")
-			.type(inventoryCount.toString());
-
-		cy.get('form button[type="submit"]').should("be.visible").click();
+			.click();
 
 		cy.contains("Product Created");
 
@@ -54,7 +54,6 @@ describe("products", () => {
 		cy.url().should("eq", "http://localhost:5173/");
 	});
 
-	// ✅ ONLY CHANGE HERE
 	it("blocks product creation when not logged in", () => {
 		cy.visit("http://localhost:5173");
 
@@ -64,11 +63,13 @@ describe("products", () => {
 
 		cy.intercept("POST", "**/products").as("createProduct");
 
-		cy.get('form input[name="name"]').type(name);
-		cy.get('form input[name="price"]').type(price.toString());
-		cy.get('form input[name="inventoryCount"]').type(inventoryCount.toString());
+		cy.get('form[name="product-creation"] input[name="name"]').type(name);
+		cy.get('form[name="product-creation"] input[name="price"]').type(price.toString());
+		cy.get('form[name="product-creation"] input[name="inventoryCount"]').type(
+			inventoryCount.toString(),
+		);
 
-		cy.get('form button[type="submit"]').click();
+		cy.get('form[name="product-creation"] button[type="submit"]').click();
 
 		cy.wait("@createProduct").then((interception) => {
 			expect(interception.response.statusCode).to.eq(400);
@@ -163,5 +164,77 @@ describe("users - login", () => {
 		cy.get("#confirmation")
 			.should("be.visible")
 			.and("contain.text", "Invalid credentials");
+	});
+});
+
+describe("purchases", () => {
+	it("blocks purchase when not logged in", () => {
+		cy.visit("http://localhost:5173");
+
+		cy.intercept("POST", "**/purchases").as("createPurchase");
+
+		cy.get('form[name="product-purchase"] input[name="quantity"]').type("1");
+
+		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+
+		cy.wait("@createPurchase").then((interception) => {
+			expect(interception.response.statusCode).to.eq(401);
+		});
+	});
+
+	it("rejects negative quantity", () => {
+		cy.visit("http://localhost:5173");
+
+		cy.intercept("POST", "**/purchases").as("createPurchase");
+
+		cy.get('form[name="product-purchase"] input[name="quantity"]').type("-3");
+
+		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+
+		cy.wait("@createPurchase").then((interception) => {
+			expect(interception.response.statusCode).to.eq(400);
+			expect(interception.response.body).to.include("greater than 0");
+		});
+	});
+
+	it("rejects quantity greater than inventory", () => {
+		cy.visit("http://localhost:5173");
+
+		cy.intercept("GET", "**/products/**", {
+			body: {
+				id: 1,
+				name: "Test Product",
+				price: 10,
+				inventoryCount: 2,
+			},
+		});
+
+		cy.intercept("POST", "**/purchases").as("createPurchase");
+
+		cy.get('form[name="product-purchase"] input[name="quantity"]').type("10");
+
+		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+
+		cy.wait("@createPurchase").then((interception) => {
+			expect(interception.response.statusCode).to.eq(400);
+			expect(interception.response.body).to.include("Not enough inventory");
+		});
+	});
+
+	it("ensures backend ignores spoofed userId", () => {
+		cy.visit("http://localhost:5173");
+
+		cy.intercept("POST", "**/purchases", (req) => {
+			req.body.userId = 9999;
+		}).as("createPurchase");
+
+		cy.get('form[name="product-purchase"] input[name="quantity"]').type("1");
+
+		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+
+		cy.wait("@createPurchase").then((interception) => {
+			expect(interception.response.statusCode).to.eq(200);
+			expect(interception.response.body.userId).to.not.eq(9999);
+		});
 	});
 });
