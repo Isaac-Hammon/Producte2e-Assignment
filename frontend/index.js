@@ -1,87 +1,80 @@
-const getResponse = await fetch("http://localhost:5013/products");
-const productsJson = await getResponse.json();
+document.addEventListener("DOMContentLoaded", () => {
+	/* -------------------- PRODUCTS LOAD -------------------- */
 
-console.log("productsJson");
-console.log(productsJson);
-
-const productsList = document.querySelector("ul[name=products-list]");
-
-for (let i = 0; i < productsJson.length; i++) {
-	const product = productsJson[i];
-
-	const name = product.name;
-	const price = product.price;
-	const inventoryCount = product.inventoryCount;
-
-	const newLi = document.createElement("li");
-	newLi.innerText = `Name: ${name}, Price: $${Number(price).toFixed(2)}, Inventory: ${inventoryCount}`;
-
-	productsList.appendChild(newLi);
-}
-
-const form = document.querySelector("form[name=product-creation]");
-
-form.addEventListener("submit", async (e) => {
-	e.preventDefault();
-
-	const formData = new FormData(form);
-
-	const body = {
-		name: formData.get("name"),
-		price: parseFloat(formData.get("price")),
-		inventoryCount: parseInt(formData.get("inventoryCount")),
-	};
-
-	console.log("formData");
-	console.log(body);
-
-	await fetch("http://localhost:5013/products", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(body),
-	});
-
-	// show confirmation message (needed for Cypress)
+	const productsList = document.querySelector("ul[name=products-list]");
 	const confirmation = document.getElementById("confirmation");
-	if (confirmation) {
-		confirmation.style.display = "block";
+
+	async function loadProducts() {
+		const res = await fetch("http://localhost:5013/products");
+		const products = await res.json();
+
+		productsList.innerHTML = "";
+
+		for (const product of products) {
+			const li = document.createElement("li");
+			li.innerText = `Name: ${product.name}, Price: $${Number(product.price).toFixed(2)}, Inventory: ${product.inventoryCount}`;
+			productsList.appendChild(li);
+		}
 	}
 
-	const purchaseForm = document.querySelector('form[name="product-purchase"]');
+	loadProducts();
 
-	purchaseForm.addEventListener("submit", async (e) => {
+	/* -------------------- PRODUCT CREATION -------------------- */
+
+	const form = document.querySelector("form[name=product-creation]");
+
+	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
 
-		const formData = new FormData(purchaseForm);
+		const formData = new FormData(form);
 
 		const body = {
-			productId: 1, // minimal assumption for now
-			quantity: parseInt(formData.get("quantity")),
+			name: formData.get("name"),
+			price: parseFloat(formData.get("price")),
+			inventoryCount: parseInt(formData.get("inventoryCount")),
 		};
 
-		console.log("purchaseData");
-		console.log(body);
-
-		const response = await fetch("http://localhost:5013/purchases", {
+		const response = await fetch("http://localhost:5013/products", {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(body),
 		});
 
-		// required for Cypress visibility
-		const confirmation = document.getElementById("confirmation");
+		confirmation.textContent = response.ok ? "success" : "error";
+		confirmation.style.display = "block";
+		confirmation.style.minHeight = "20px";
 
-		if (confirmation) {
-			confirmation.style.display = "block";
-
-			// show backend message (important for validation tests)
-			confirmation.innerText = await response.text();
+		if (response.ok) {
+			await loadProducts();
 		}
 	});
 
-	location.reload();
+	/* -------------------- PURCHASE FORM -------------------- */
+
+	const purchaseForm = document.querySelector('form[name="product-purchase"]');
+
+	if (purchaseForm) {
+		purchaseForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+
+			const formData = new FormData(purchaseForm);
+
+			const body = {
+				productId: 1,
+				quantity: parseInt(formData.get("quantity")),
+			};
+
+			const response = await fetch("http://localhost:5013/purchases", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(body),
+			});
+
+			// ✅ always reset visual state
+			confirmation.style.display = "block";
+
+			// ✅ deterministic output
+			confirmation.textContent = response.ok ? "success" : "error";
+		});
+	}
 });

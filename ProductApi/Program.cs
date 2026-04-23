@@ -1,24 +1,38 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ProductDb>(opt => opt.UseInMemoryDatabase("ProductList"));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+// -------------------- SERVICES --------------------
 
-// CORS
-builder.Services.AddCors(options =>
+builder.Services.AddDbContext<ProductDb>(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
+	options.UseInMemoryDatabase("ProductDb");
 });
 
+builder.Services.AddAuthorization();
+
+// ✅ CORS must be registered here (before Build)
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy(MyAllowSpecificOrigins, policy =>
+	{
+		policy.AllowAnyOrigin()
+		      .AllowAnyMethod()
+		      .AllowAnyHeader();
+	});
+});
+
+// -------------------- BUILD APP --------------------
+
 var app = builder.Build();
+
+// -------------------- MIDDLEWARE --------------------
+
+app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthorization();
 
 // ------------------- Seed data -------------------
 using (var scope = app.Services.CreateScope())
@@ -35,17 +49,76 @@ using (var scope = app.Services.CreateScope())
 
         db.SaveChanges();
     }
+
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new User
+        {
+            Email = "water@water.com",
+            Password = "password"
+    });
+
+        db.SaveChanges();
+    }
+
+
 }
+
+
+
+// ✅ CORS (MOVED UP)
+app.UseCors(MyAllowSpecificOrigins);
+
+// ✅ AUTH (REQUIRED for [Authorize])
+
+app.UseAuthorization();
+
+app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpContext http) =>
+{
+    var userIdClaim = http.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+    // ✅ Cypress expects 401 when not logged in
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var userId = int.Parse(userIdClaim.Value);
+
+    if (request.Quantity <= 0)
+        return Results.BadRequest("Quantity must be greater than 0");
+
+    var product = db.Products.Find(request.ProductId);
+
+    if (product == null)
+        return Results.NotFound();
+
+    if (request.Quantity > product.InventoryCount)
+        return Results.BadRequest("Not enough inventory");
+
+    var purchase = new Purchase
+    {
+        ProductId = request.ProductId,
+        Quantity = request.Quantity,
+        UserId = userId
+    };
+
+    db.Purchases.Add(purchase);
+    product.InventoryCount -= request.Quantity;
+
+    db.SaveChanges();
+
+    return Results.Ok(purchase);
+});
 
 // GET all products
 app.MapGet("/products", async (ProductDb db) =>
     await db.Products.ToListAsync()
 );
 
-// ✅ BULLETPROOF AUTH CHECK (FIXED)
+// CREATE product
 app.MapPost("/products", async (HttpRequest request, Product product, ProductDb db) =>
 {
-    // safer + fully consistent header extraction
     if (!request.Headers.TryGetValue("X-User-Email", out var userEmail) ||
         string.IsNullOrWhiteSpace(userEmail.ToString()))
     {
@@ -61,7 +134,7 @@ app.MapPost("/products", async (HttpRequest request, Product product, ProductDb 
     return Results.Created($"/products/{product.Id}", product);
 });
 
-// POST a new user
+// USERS
 app.MapPost("/users", async (User user, ProductDb db) =>
 {
     var existingUser = await db.Users
@@ -97,7 +170,5 @@ app.MapPost("/login", async (User login, ProductDb db) =>
         email = user.Email
     });
 });
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.Run();
