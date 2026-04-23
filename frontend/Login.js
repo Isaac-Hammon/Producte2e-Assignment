@@ -21,13 +21,13 @@ form.addEventListener("submit", async (event) => {
 		confirmation.style.display = "block";
 
 		if (!response.ok) {
-			confirmation.textContent =
-				"Login failed: " + (data.message || "Invalid credentials");
+			confirmation.textContent = "error";
 		} else {
-			confirmation.textContent = "Login successful! Welcome user ID: " + data.id;
+			localStorage.setItem("userId", data.id);
+			confirmation.textContent = "Login successful";
 		}
 	} catch (error) {
 		confirmation.style.display = "block";
-		confirmation.textContent = "Error: Could not connect to server";
+		confirmation.textContent = "error";
 	}
 });

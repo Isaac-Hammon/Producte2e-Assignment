@@ -21,12 +21,13 @@ form.addEventListener("submit", async (event) => {
 		confirmation.style.display = "block";
 
 		if (!response.ok) {
-			confirmation.textContent = "Error: " + (data.message || "Email already exists");
+			confirmation.textContent = "error";
 		} else {
-			confirmation.textContent = "Success! User created with ID: " + data.id;
+			confirmation.textContent = "User created";
+			localStorage.setItem("userId", data.id);
 		}
 	} catch (error) {
 		confirmation.style.display = "block";
-		confirmation.textContent = "Error: Could not connect to server";
+		confirmation.textContent = "error";
 	}
 });
