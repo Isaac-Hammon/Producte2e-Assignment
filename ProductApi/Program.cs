@@ -62,7 +62,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 /* ===================================================== */
-/* ✅ NEW: HELPER METHOD FOR AUTH (HEADER-BASED LOGIN) */
+/* HELPER METHOD FOR AUTH (HEADER-BASED LOGIN) */
 /* ===================================================== */
 User? GetUserFromHeader(HttpRequest request, ProductDb db)
 {
@@ -74,15 +74,15 @@ User? GetUserFromHeader(HttpRequest request, ProductDb db)
 
 
 /* ===================================================== */
-/* ✅ FIXED: PURCHASE ENDPOINT (NO CLAIMS, USE HEADER) */
+/* PURCHASE ENDPOINT (NO CLAIMS, USE HEADER) */
 /* ===================================================== */
 app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpRequest http) =>
 {
-    var user = GetUserFromHeader(http, db); // ✅ NEW
+    var user = GetUserFromHeader(http, db); 
 
     if (user == null)
     {
-        return Results.Unauthorized(); // ✅ FIXED
+        return Results.Unauthorized(); 
     }
 
     if (request.Quantity <= 0)
@@ -100,7 +100,7 @@ app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpRequest ht
     {
         ProductId = request.ProductId,
         Quantity = request.Quantity,
-        UserId = user.Id // ✅ NEW (secure)
+        UserId = user.Id 
     };
 
     db.Purchases.Add(purchase);
@@ -119,18 +119,18 @@ app.MapGet("/products", async (ProductDb db) =>
 
 
 /* ===================================================== */
-/* ✅ FIXED: CREATE PRODUCT (ASSIGN OWNER) */
+/* CREATE PRODUCT (ASSIGN OWNER) */
 /* ===================================================== */
 app.MapPost("/products", async (HttpRequest request, Product product, ProductDb db) =>
 {
-    var user = GetUserFromHeader(request, db); // ✅ NEW
+    var user = GetUserFromHeader(request, db); 
 
     if (user == null)
     {
-        return Results.Unauthorized(); // ✅ FIXED
+        return Results.Unauthorized(); 
     }
 
-    product.UserId = user.Id; // ✅ NEW
+    product.UserId = user.Id; 
 
     db.Products.Add(product);
     await db.SaveChangesAsync();
@@ -140,17 +140,17 @@ app.MapPost("/products", async (HttpRequest request, Product product, ProductDb 
 
 
 /* ===================================================== */
-/* ✅ NEW: EDIT PRODUCT (OWNER ONLY) */
+/* EDIT PRODUCT (OWNER ONLY) */
 /* ===================================================== */
 app.MapPut("/products/{id}", async (int id, HttpRequest request, Product updated, ProductDb db) =>
 {
-    var user = GetUserFromHeader(request, db); // ✅ NEW
+    var user = GetUserFromHeader(request, db); 
     if (user == null) return Results.Unauthorized();
 
     var product = await db.Products.FindAsync(id);
     if (product == null) return Results.NotFound();
 
-    if (product.UserId != user.Id) // ✅ NEW
+    if (product.UserId != user.Id) 
         return Results.Unauthorized();
 
     product.Name = updated.Name;
@@ -164,7 +164,7 @@ app.MapPut("/products/{id}", async (int id, HttpRequest request, Product updated
 
 
 /* ===================================================== */
-/* ✅ NEW: DELETE PRODUCT + CASCADE PURCHASES */
+/* DELETE PRODUCT + CASCADE PURCHASES */
 /* ===================================================== */
 app.MapDelete("/products/{id}", async (int id, HttpRequest request, ProductDb db) =>
 {
@@ -178,7 +178,7 @@ app.MapDelete("/products/{id}", async (int id, HttpRequest request, ProductDb db
     if (product.UserId != user.Id)
         return Results.Unauthorized();
 
-    // 🔥 IMPORTANT: delete ALL related purchases first
+    
     var relatedPurchases = db.Purchases
         .Where(p => p.ProductId == id)
         .ToList();
@@ -195,7 +195,7 @@ app.MapDelete("/products/{id}", async (int id, HttpRequest request, ProductDb db
 
 
 /* ===================================================== */
-/* ✅ NEW: SELLER ORDERS */
+/*  SELLER ORDERS */
 /* ===================================================== */
 app.MapGet("/seller/orders", (HttpRequest request, ProductDb db) =>
 {
@@ -224,7 +224,7 @@ app.MapGet("/seller/orders", (HttpRequest request, ProductDb db) =>
 });
 
 /* ===================================================== */
-/* ✅ NEW: BUYER ORDERS */
+/* BUYER ORDERS */
 /* ===================================================== */
 app.MapGet("/my/orders", (HttpRequest request, ProductDb db) =>
 {

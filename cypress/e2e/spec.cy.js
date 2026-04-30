@@ -244,7 +244,7 @@ describe("products - edit/delete ownership", () => {
 			cy.request({
 				method: "PUT",
 				url: `http://localhost:5013/products/${product.id}`,
-				headers: getEmail(email), // ✅ FIX
+				headers: getEmail(email),
 				failOnStatusCode: false,
 				body: {
 					name: "Updated Product",
@@ -287,7 +287,7 @@ describe("products - edit/delete ownership", () => {
 			cy.request({
 				method: "DELETE",
 				url: `http://localhost:5013/products/${product.id}`,
-				headers: getEmail(email), // ✅ FIX
+				headers: getEmail(email),
 				failOnStatusCode: false,
 			})
 				.its("status")
@@ -309,7 +309,7 @@ describe("orders visibility", () => {
 		cy.request({
 			method: "GET",
 			url: "http://localhost:5013/seller/orders",
-			headers: getEmail(email), // ✅ FIX
+			headers: getEmail(email),
 		})
 			.its("status")
 			.should("eq", 200);
@@ -333,7 +333,7 @@ describe("orders visibility", () => {
 		cy.request({
 			method: "GET",
 			url: "http://localhost:5013/my/orders",
-			headers: getEmail(email), // ✅ FIX
+			headers: getEmail(email),
 		})
 			.its("status")
 			.should("eq", 200);
