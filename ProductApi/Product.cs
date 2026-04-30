@@ -9,5 +9,5 @@ public class Product {
 
     public int InventoryCount { get; set; }
 
-    public int UserId { get; set; } //Added 
+    public int UserId { get; set; } 
 }
