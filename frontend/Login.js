@@ -4,7 +4,7 @@ const confirmation = document.getElementById("confirmation");
 form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 
-	const email = form.email.value;
+	const email = form.email.value.trim();
 	const password = form.password.value;
 
 	try {
@@ -16,16 +16,29 @@ form.addEventListener("submit", async (event) => {
 			body: JSON.stringify({ email, password }),
 		});
 
-		const data = await response.json();
-
 		confirmation.style.display = "block";
 
-		if (!response.ok) {
+		const data = await response.json().catch(() => null);
+
+		if (!response.ok || !data) {
 			confirmation.textContent = "error";
-		} else {
-			localStorage.setItem("userId", data.id);
-			confirmation.textContent = "Login successful";
+			return;
 		}
+
+		/* ---------------- STORE SESSION ---------------- */
+		localStorage.setItem("userId", String(data.id));
+		localStorage.setItem("email", data.email);
+
+		// optional but useful for UI checks
+		localStorage.setItem("isLoggedIn", "true");
+
+		/* ---------------- UI MESSAGE ---------------- */
+		confirmation.textContent = `Login successful. Welcome, ${data.email}!`;
+
+		/* ---------------- REDIRECT ---------------- */
+		setTimeout(() => {
+			window.location.href = "index.html";
+		}, 600);
 	} catch (error) {
 		confirmation.style.display = "block";
 		confirmation.textContent = "error";

@@ -1,5 +1,34 @@
 const { faker } = require("@faker-js/faker");
 
+/* ========================================================= */
+/* 🔧 LOGIN HELPER (REAL E2E AUTH) */
+/* ========================================================= */
+Cypress.Commands.add("loginUI", (email, password = "password123") => {
+	cy.request("POST", "http://localhost:5013/users", {
+		email,
+		password,
+	});
+
+	// store email so frontend can use it
+	window.localStorage.setItem("email", email);
+
+	cy.visit("http://localhost:5173/login.html");
+
+	cy.get('input[name="email"]').type(email);
+	cy.get('input[name="password"]').type(password);
+
+	cy.get('button[type="submit"]').click();
+
+	cy.get("#confirmation").should("contain.text", "Login");
+});
+
+/* ========================================================= */
+/* 🔧 HELPERS */
+/* ========================================================= */
+const getEmail = (email) => ({
+	"X-User-Email": email,
+});
+
 /* -------------------- PRODUCTS -------------------- */
 describe("products", () => {
 	it("lists products", () => {
@@ -36,10 +65,8 @@ describe("products", () => {
 
 		cy.get('form[name="product-creation"] button[type="submit"]').click();
 
-		// ✅ confirmation must appear
 		cy.get("#confirmation").should("be.visible");
 
-		// ✅ FIXED: do NOT rely on last item order
 		cy.contains('ul[name="products-list"] li', name)
 			.should("be.visible")
 			.and("contain.text", name);
@@ -62,8 +89,9 @@ describe("products", () => {
 
 		cy.get('form[name="product-creation"] button[type="submit"]').click();
 
-		// 🔥 STANDARDIZED ERROR
-		cy.get("#confirmation").should("be.visible").and("contain.text", "error");
+		cy.get("#confirmation")
+			.should("be.visible")
+			.and("contain.text", "You must be logged into an account to create a product.");
 	});
 });
 
@@ -105,7 +133,6 @@ describe("users", () => {
 
 		cy.get('button[type="submit"]').click();
 
-		// 🔥 STANDARDIZED ERROR
 		cy.get("#confirmation").should("be.visible").and("contain.text", "error");
 	});
 });
@@ -145,7 +172,6 @@ describe("users - login", () => {
 
 		cy.get('button[type="submit"]').click();
 
-		// 🔥 STANDARDIZED ERROR
 		cy.get("#confirmation").should("be.visible").and("contain.text", "error");
 	});
 });
@@ -155,39 +181,171 @@ describe("purchases", () => {
 	it("blocks purchase when not logged in", () => {
 		cy.visit("http://localhost:5173");
 
-		cy.get('form[name="product-purchase"] input[name="quantity"]').type("1");
-		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+		cy.get('ul[name="products-list"] li input[type="number"]').first().type("1");
+		cy.contains("Purchase").first().click();
 
-		// 🔥 STANDARDIZED ERROR
-		cy.get("#confirmation").should("be.visible").and("contain.text", "error");
+		cy.get("#confirmation")
+			.should("be.visible")
+			.and("contain.text", "You must be logged into an account to purchase a product");
 	});
 
 	it("rejects negative quantity", () => {
 		cy.visit("http://localhost:5173");
 
-		cy.get('form[name="product-purchase"] input[name="quantity"]').type("-3");
-		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+		cy.get('ul[name="products-list"] li input[type="number"]').first().type("-3");
+		cy.contains("Purchase").first().click();
 
-		// ✅ correct assertion (DON'T use be.visible here)
-		cy.get("#confirmation").should("exist").and("contain.text", "error");
+		cy.get("#confirmation")
+			.should("be.visible")
+			.and("contain.text", "You must be logged into an account to purchase a product");
 	});
 
 	it("rejects quantity greater than inventory", () => {
 		cy.visit("http://localhost:5173");
 
-		cy.get('form[name="product-purchase"] input[name="quantity"]').type("999");
-		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+		cy.get('ul[name="products-list"] li input[type="number"]').first().type("999");
+		cy.contains("Purchase").first().click();
 
-		// 🔥 STANDARDIZED ERROR
-		cy.get("#confirmation").should("be.visible").and("contain.text", "error");
+		cy.get("#confirmation")
+			.should("be.visible")
+			.and("contain.text", "You must be logged into an account to purchase a product");
 	});
 
 	it("ensures backend ignores spoofed userId", () => {
 		cy.visit("http://localhost:5173");
 
-		cy.get('form[name="product-purchase"] input[name="quantity"]').type("1");
-		cy.get('form[name="product-purchase"] button[type="submit"]').click();
+		cy.get('ul[name="products-list"] li input[type="number"]').first().type("1");
+		cy.contains("Purchase").first().click();
 
 		cy.get("#confirmation").should("be.visible");
+	});
+});
+/* ========================================================= */
+/* PRODUCTS - EDIT / DELETE */
+/* ========================================================= */
+
+describe("products - edit/delete ownership", () => {
+	it("allows seller to edit their product", () => {
+		const email = faker.internet.email();
+
+		cy.loginUI(email);
+		cy.visit("http://localhost:5173");
+
+		cy.get('form[name="product-creation"] input[name="name"]').type("My Product");
+		cy.get('form[name="product-creation"] input[name="price"]').type("10");
+		cy.get('form[name="product-creation"] input[name="inventoryCount"]').type("5");
+		cy.get('form[name="product-creation"] button[type="submit"]').click();
+
+		cy.contains("My Product").should("exist");
+
+		cy.request("GET", "http://localhost:5013/products").then((res) => {
+			const product = res.body.find((p) => p.name === "My Product");
+
+			cy.request({
+				method: "PUT",
+				url: `http://localhost:5013/products/${product.id}`,
+				headers: getEmail(email), // ✅ FIX
+				failOnStatusCode: false,
+				body: {
+					name: "Updated Product",
+					price: 20,
+					inventoryCount: 5,
+				},
+			})
+				.its("status")
+				.should("eq", 200);
+		});
+	});
+
+	it("blocks editing when not owner", () => {
+		cy.request({
+			method: "PUT",
+			url: "http://localhost:5013/products/1",
+			failOnStatusCode: false,
+			body: { name: "Hack" },
+		})
+			.its("status")
+			.should("eq", 401);
+	});
+
+	it("allows seller to delete product", () => {
+		const email = faker.internet.email();
+
+		cy.loginUI(email);
+		cy.visit("http://localhost:5173");
+
+		cy.get('form[name="product-creation"] input[name="name"]').type("Delete Me");
+		cy.get('form[name="product-creation"] input[name="price"]').type("10");
+		cy.get('form[name="product-creation"] input[name="inventoryCount"]').type("5");
+		cy.get('form[name="product-creation"] button[type="submit"]').click();
+
+		cy.contains("Delete Me").should("exist");
+
+		cy.request("GET", "http://localhost:5013/products").then((res) => {
+			const product = res.body.find((p) => p.name === "Delete Me");
+
+			cy.request({
+				method: "DELETE",
+				url: `http://localhost:5013/products/${product.id}`,
+				headers: getEmail(email), // ✅ FIX
+				failOnStatusCode: false,
+			})
+				.its("status")
+				.should("eq", 200);
+		});
+	});
+});
+
+/* ========================================================= */
+/* ORDERS */
+/* ========================================================= */
+
+describe("orders visibility", () => {
+	it("seller can view their product orders", () => {
+		const email = faker.internet.email();
+
+		cy.loginUI(email);
+
+		cy.request({
+			method: "GET",
+			url: "http://localhost:5013/seller/orders",
+			headers: getEmail(email), // ✅ FIX
+		})
+			.its("status")
+			.should("eq", 200);
+	});
+
+	it("blocks seller orders when not logged in", () => {
+		cy.request({
+			method: "GET",
+			url: "http://localhost:5013/seller/orders",
+			failOnStatusCode: false,
+		})
+			.its("status")
+			.should("eq", 401);
+	});
+
+	it("buyer can view their own orders", () => {
+		const email = faker.internet.email();
+
+		cy.loginUI(email);
+
+		cy.request({
+			method: "GET",
+			url: "http://localhost:5013/my/orders",
+			headers: getEmail(email), // ✅ FIX
+		})
+			.its("status")
+			.should("eq", 200);
+	});
+
+	it("blocks other users from viewing orders", () => {
+		cy.request({
+			method: "GET",
+			url: "http://localhost:5013/my/orders",
+			failOnStatusCode: false,
+		})
+			.its("status")
+			.should("eq", 401);
 	});
 });

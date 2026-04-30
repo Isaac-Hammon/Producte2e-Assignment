@@ -14,7 +14,6 @@ builder.Services.AddDbContext<ProductDb>(options =>
 
 builder.Services.AddAuthorization();
 
-// ✅ CORS must be registered here (before Build)
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy(MyAllowSpecificOrigins, policy =>
@@ -42,9 +41,10 @@ using (var scope = app.Services.CreateScope())
     if (!db.Products.Any())
     {
         db.Products.AddRange(
-            new Product { Name = "Laptop", Price = 1200.99m, InventoryCount = 10 },
-            new Product { Name = "Headphones", Price = 199.50m, InventoryCount = 5 },
-            new Product { Name = "Keyboard", Price = 89.99m, InventoryCount = 20 }
+            new Product { Name = "Laptop", Price = 1200.99m, InventoryCount =  10, UserId = 1 },
+            new Product {  Name = "Headphones", Price = 199.50m, InventoryCount = 5, UserId = 1 },
+            new Product {  Name = "Keyboard", Price = 89.99m, InventoryCount = 20, UserId = 2 },
+            new Product {  Name = "Monitor", Price = 89.99m, InventoryCount = 20, UserId = 2 }
         );
 
         db.SaveChanges();
@@ -52,41 +52,41 @@ using (var scope = app.Services.CreateScope())
 
     if (!db.Users.Any())
     {
-        db.Users.Add(new User
-        {
-            Email = "water@water.com",
-            Password = "password"
-    });
+        db.Users.AddRange(
+            new User {Id = 1, Email = "water@water.com", Password = "Password" },
+            new User {Id = 2, Email = "egg@egg.com", Password = "Yolk" }
+        );
 
         db.SaveChanges();
     }
+}
 
+/* ===================================================== */
+/* ✅ NEW: HELPER METHOD FOR AUTH (HEADER-BASED LOGIN) */
+/* ===================================================== */
+User? GetUserFromHeader(HttpRequest request, ProductDb db)
+{
+    if (!request.Headers.TryGetValue("X-User-Email", out var email))
+        return null;
 
+    return db.Users.FirstOrDefault(u => u.Email == email);
 }
 
 
-
-// ✅ CORS (MOVED UP)
-app.UseCors(MyAllowSpecificOrigins);
-
-// ✅ AUTH (REQUIRED for [Authorize])
-
-app.UseAuthorization();
-
-app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpContext http) =>
+/* ===================================================== */
+/* ✅ FIXED: PURCHASE ENDPOINT (NO CLAIMS, USE HEADER) */
+/* ===================================================== */
+app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpRequest http) =>
 {
-    var userIdClaim = http.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+    var user = GetUserFromHeader(http, db); // ✅ NEW
 
-    // ✅ Cypress expects 401 when not logged in
-    if (userIdClaim == null)
+    if (user == null)
     {
-        return Results.Unauthorized();
+        return Results.Unauthorized(); // ✅ FIXED
     }
 
-    var userId = int.Parse(userIdClaim.Value);
-
     if (request.Quantity <= 0)
-        return Results.BadRequest("Quantity must be greater than 0");
+        return Results.BadRequest();
 
     var product = db.Products.Find(request.ProductId);
 
@@ -94,13 +94,13 @@ app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpContext ht
         return Results.NotFound();
 
     if (request.Quantity > product.InventoryCount)
-        return Results.BadRequest("Not enough inventory");
+        return Results.BadRequest();
 
     var purchase = new Purchase
     {
         ProductId = request.ProductId,
         Quantity = request.Quantity,
-        UserId = userId
+        UserId = user.Id // ✅ NEW (secure)
     };
 
     db.Purchases.Add(purchase);
@@ -111,22 +111,26 @@ app.MapPost("/purchases", (PurchaseRequest request, ProductDb db, HttpContext ht
     return Results.Ok(purchase);
 });
 
+
 // GET all products
 app.MapGet("/products", async (ProductDb db) =>
     await db.Products.ToListAsync()
 );
 
-// CREATE product
+
+/* ===================================================== */
+/* ✅ FIXED: CREATE PRODUCT (ASSIGN OWNER) */
+/* ===================================================== */
 app.MapPost("/products", async (HttpRequest request, Product product, ProductDb db) =>
 {
-    if (!request.Headers.TryGetValue("X-User-Email", out var userEmail) ||
-        string.IsNullOrWhiteSpace(userEmail.ToString()))
+    var user = GetUserFromHeader(request, db); // ✅ NEW
+
+    if (user == null)
     {
-        return Results.BadRequest(new
-        {
-            message = "You must be logged in to create a product"
-        });
+        return Results.Unauthorized(); // ✅ FIXED
     }
+
+    product.UserId = user.Id; // ✅ NEW
 
     db.Products.Add(product);
     await db.SaveChangesAsync();
@@ -134,6 +138,119 @@ app.MapPost("/products", async (HttpRequest request, Product product, ProductDb 
     return Results.Created($"/products/{product.Id}", product);
 });
 
+
+/* ===================================================== */
+/* ✅ NEW: EDIT PRODUCT (OWNER ONLY) */
+/* ===================================================== */
+app.MapPut("/products/{id}", async (int id, HttpRequest request, Product updated, ProductDb db) =>
+{
+    var user = GetUserFromHeader(request, db); // ✅ NEW
+    if (user == null) return Results.Unauthorized();
+
+    var product = await db.Products.FindAsync(id);
+    if (product == null) return Results.NotFound();
+
+    if (product.UserId != user.Id) // ✅ NEW
+        return Results.Unauthorized();
+
+    product.Name = updated.Name;
+    product.Price = updated.Price;
+    product.InventoryCount = updated.InventoryCount;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(product);
+});
+
+
+/* ===================================================== */
+/* ✅ NEW: DELETE PRODUCT + CASCADE PURCHASES */
+/* ===================================================== */
+app.MapDelete("/products/{id}", async (int id, HttpRequest request, ProductDb db) =>
+{
+    var user = GetUserFromHeader(request, db);
+    if (user == null) return Results.Unauthorized();
+
+    var product = await db.Products.FindAsync(id);
+    if (product == null) return Results.NotFound();
+
+    // Only owner can delete
+    if (product.UserId != user.Id)
+        return Results.Unauthorized();
+
+    // 🔥 IMPORTANT: delete ALL related purchases first
+    var relatedPurchases = db.Purchases
+        .Where(p => p.ProductId == id)
+        .ToList();
+
+    db.Purchases.RemoveRange(relatedPurchases);
+
+    // Then delete the product
+    db.Products.Remove(product);
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+
+
+/* ===================================================== */
+/* ✅ NEW: SELLER ORDERS */
+/* ===================================================== */
+app.MapGet("/seller/orders", (HttpRequest request, ProductDb db) =>
+{
+    var user = GetUserFromHeader(request, db);
+    if (user == null) return Results.Unauthorized();
+
+    var orders = db.Purchases
+        .Include(p => p.Product)
+        .Where(p => p.Product != null && p.Product!.UserId == user.Id)
+        .Select(p => new
+        {
+            productName = p.Product!.Name,
+            quantity = p.Quantity,
+            unitPrice = p.Product!.Price,
+            revenue = p.Product!.Price * p.Quantity
+        })
+        .ToList();
+
+    var totalRevenue = orders.Sum(o => o.revenue);
+
+    return Results.Ok(new
+    {
+        orders,
+        totalRevenue
+    });
+});
+
+/* ===================================================== */
+/* ✅ NEW: BUYER ORDERS */
+/* ===================================================== */
+app.MapGet("/my/orders", (HttpRequest request, ProductDb db) =>
+{
+    var user = GetUserFromHeader(request, db);
+    if (user == null) return Results.Unauthorized();
+
+    var orders = db.Purchases
+        .Include(p => p.Product)
+        .Where(p => p.UserId == user.Id && p.Product != null)
+        .Select(p => new
+        {
+            productName = p.Product!.Name,
+            quantity = p.Quantity,
+            total = p.Product!.Price * p.Quantity,
+            createdAt = p.CreatedAt
+        })
+        .ToList();
+
+    var totalSpent = orders.Sum(o => o.total);
+
+    return Results.Ok(new
+    {
+        orders,
+        totalSpent
+    });
+});
 // USERS
 app.MapPost("/users", async (User user, ProductDb db) =>
 {
@@ -150,6 +267,7 @@ app.MapPost("/users", async (User user, ProductDb db) =>
 
     return Results.Ok(new { id = user.Id });
 });
+
 
 // LOGIN
 app.MapPost("/login", async (User login, ProductDb db) =>

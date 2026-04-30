@@ -6,14 +6,34 @@
 </head>
 
 <body>
+
+    <!-- ================= AUTH BUTTONS ================= -->
+    <div id="auth-buttons">
+        <button id="login-btn" onclick="window.location.href='login.html'">
+            Login
+        </button>
+
+        <button id="signup-btn" onclick="window.location.href='registration.html'">
+            Sign Up
+        </button>
+
+        <button id="logout-btn" style="display:none;">
+            Logout
+        </button>
+    </div>
+
+    <!-- ================= WELCOME MESSAGE ================= -->
+    <h2 id="welcome-message"></h2>
+
+    <!-- ================= PRODUCTS ================= -->
     <h1>Products:</h1>
 
     <ul name="products-list"></ul>
 
+    <!-- ================= CONFIRMATION ================= -->
+    <p id="confirmation" style="display:none;"></p>
 
-    <p id="confirmation">error</p>
-
-
+    <!-- ================= PRODUCT CREATION ================= -->
     <form name="product-creation">
         <label for="name">Name:</label>
         <input name="name" type="text" />
@@ -29,15 +49,8 @@
 
     <hr />
 
-
-    <h2>Purchase Product</h2>
-
-    <form name="product-purchase">
-        <label for="quantity">Quantity:</label>
-        <input name="quantity" type="number" min="1" />
-
-        <button type="submit">Buy</button>
-    </form>
+    <!-- ================= RECEIPT ================= -->
+    <div id="receipt" style="display:none; border:1px solid #ccc; padding:10px; margin-top:10px;"></div>
 
 </body>
 
